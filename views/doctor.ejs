@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Doctor Dashboard</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/stylesheets/doctor.css">
+    </head>
+<body>
+<!-- Sidebar for Doctor -->
+<div class="sidebar">
+    <h2>Doctor Dashboard</h2>
+    <ul>
+        <li><a href="#appointments"><i class="fa fa-calendar"></i> Appointments</a></li>
+        <li><a href="#patients"><i class="fa fa-users"></i> Patients</a></li>
+        <li><a href="#patient-details"><i class="fa fa-user-md"></i> Patient Details</a></li>
+        <li><a href="#schedule-management"><i class="fa fa-calendar-check"></i> Schedule Management</a></li>
+    </ul>
+</div>
+
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Doctor Dashboard -->
+        <div id="appointments" class="appointments">
+            <h2>Today's Appointments</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Patient</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>9:00 AM</td>
+                        <td>Mary Johnson</td>
+                        <td><span class="badge bg-success">Scheduled</span></td>
+                        <td><button class="btn btn-danger"><i class="fa fa-times"></i> Cancel</button></td>
+                    </tr>
+                    <tr>
+                        <td>10:30 AM</td>
+                        <td>John Smith</td>
+                        <td><span class="badge bg-warning">Pending</span></td>
+                        <td><button class="btn btn-danger"><i class="fa fa-times"></i> Cancel</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- List of Patients -->
+        <div id="patients" class="patients" style="display: none;">
+            <h2>Patients to Visit</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Condition</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Mary Johnson</td>
+                        <td>Heart Attack</td>
+                        <td><button class="btn btn-info"><i class="fa fa-eye"></i> View</button></td>
+                    </tr>
+                    <tr>
+                        <td>James Brown</td>
+                        <td>Severe Bleeding</td>
+                        <td><button class="btn btn-info"><i class="fa fa-eye"></i> View</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Patient Details -->
+        <div id="patient-details" class="patient-details" style="display: none;">
+            <h2>Patient Details</h2>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Mary Johnson</h5>
+                    <p><strong>Medical Record:</strong> <span>Heart Attack</span></p>
+                    <p><strong>Age:</strong> 45</p>
+                    <p><strong>Address:</strong> 123 Main St, City</p>
+                    <button class="btn btn-primary">Update Info</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule Management -->
+        <div id="schedule-management" class="schedule-management" style="display: none;">
+            <h2>Schedule Management</h2>
+            <button class="btn btn-warning mb-3"><i class="fa fa-calendar-check"></i> View Schedule</button>
+            <button class="btn btn-danger mb-3"><i class="fa fa-calendar-times"></i> Cancel Appointment</button>
+        </div>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/javascripts/doctor.js"></script>
+</body>
+</html>

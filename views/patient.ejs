@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/patient.css">
+</head>
+<body>
+
+<!-- Sidebar for Patient -->
+<div class="sidebar">
+    <h2>Patient Dashboard</h2>
+    <ul>
+        <li><a href="#personal-info"><i class="fa fa-user"></i> Personal Info</a></li>
+        <li><a href="#medical-history"><i class="fa fa-history"></i> Medical History</a></li>
+        <li><a href="#schedule-appointment"><i class="fa fa-calendar-plus"></i> Schedule Appointment</a></li>
+        <li><a href="#appointment-status"><i class="fa fa-calendar-check"></i> Appointment Status</a></li>
+        <li><a href="#emergency-request"><i class="fa fa-exclamation-circle"></i> Emergency Request</a></li>
+    </ul>
+</div>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Personal Info -->
+    <div id="personal-info" class="personal-info">
+        <h2>Personal Information</h2>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Mary Johnson</h5>
+                <p><strong>Age:</strong> 45</p>
+                <p><strong>Gender:</strong> Female</p>
+                <p><strong>Address:</strong> 123 Main St, City</p>
+                <button class="btn btn-primary">Update Info</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Medical History -->
+    <div id="medical-history" class="medical-history" style="display: none;">
+        <h2>Medical History</h2>
+        <ul>
+            <li><strong>2022-05-15:</strong> Heart Attack - Treatment: Surgery</li>
+            <li><strong>2021-10-20:</strong> Flu - Treatment: Medication</li>
+            <li><strong>2019-03-10:</strong> Knee Surgery - Treatment: Physical Therapy</li>
+        </ul>
+    </div>
+
+    <!-- Schedule Appointment -->
+    <div id="schedule-appointment" class="schedule-appointment" style="display: none;">
+        <h2>Schedule Appointment</h2>
+        <form>
+            <div class="mb-3">
+                <label for="doctor" class="form-label">Select Doctor</label>
+                <select class="form-select" id="doctor">
+                    <option value="1">Dr. John Smith</option>
+                    <option value="2">Dr. Jane Doe</option>
+                    <option value="3">Dr. Sarah Lee</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="appointment-date" class="form-label">Select Date</label>
+                <input type="date" class="form-control" id="appointment-date">
+            </div>
+            <div class="mb-3">
+                <label for="appointment-time" class="form-label">Select Time</label>
+                <input type="time" class="form-control" id="appointment-time">
+            </div>
+            <button type="submit" class="btn btn-success">Book Appointment</button>
+        </form>
+    </div>
+
+    <!-- Appointment Status -->
+    <div id="appointment-status" class="appointment-status" style="display: none;">
+        <h2>Upcoming Appointments</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Dr. John Smith</td>
+                    <td>2024-12-20</td>
+                    <td>10:00 AM</td>
+                    <td><span class="badge bg-success">Scheduled</span></td>
+                    <td><button class="btn btn-danger"><i class="fa fa-times"></i> Cancel</button></td>
+                </tr>
+                <tr>
+                    <td>Dr. Jane Doe</td>
+                    <td>2024-12-22</td>
+                    <td>2:00 PM</td>
+                    <td><span class="badge bg-warning">Pending</span></td>
+                    <td><button class="btn btn-danger"><i class="fa fa-times"></i> Cancel</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Emergency Request -->
+    <div id="emergency-request" class="emergency-request" style="display: none;">
+        <h2>Emergency Request</h2>
+        <button class="btn btn-danger">Send Emergency Request</button>
+        <p class="mt-2">In case of an emergency, click the button above to send a quick request to the hospital.</p>
+    </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/javascripts/patient.js"></script>
+</body>
+</html>

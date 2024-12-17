@@ -1,0 +1,47 @@
+/* Đảm bảo body có một margin và padding hợp lý */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Sidebar - cố định, không bị ảnh hưởng bởi cuộn */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100vh;
+    padding-top: 20px;
+    background-color: #343a40;
+    color: white;
+    z-index: 1000; /* Đảm bảo sidebar ở trên phần còn lại */
+}
+
+/* Phần nội dung chính, dịch sang phải đủ để không bị che khuất */
+.main-content {
+    margin-left: 250px; /* Cộng với độ rộng của sidebar */
+    padding: 20px;
+}
+
+/* Tăng chiều rộng của các phần card để hiển thị đầy đủ */
+.card {
+    margin-bottom: 20px;
+}
+
+.card-title {
+    font-size: 1.2rem;
+}
+
+/* Table căn giữa các ô */
+table th, table td {
+    text-align: center;
+}
+
+h2 {
+    margin-top: 30px;
+}
+
+.badge {
+    font-size: 0.9rem;
+}

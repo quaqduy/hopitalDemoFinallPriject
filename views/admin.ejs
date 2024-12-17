@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin Dashboard</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/stylesheets/admin.css">
+    </head>
+<body>
+    <div class="container-fluid">
+        <!-- Sidebar -->
+        <nav class="col-md-2 bg-dark sidebar p-3">
+            <h4 class="text-white">Admin Dashboard</h4>
+            <ul class="nav flex-column text-white">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#" id="dashboardLink">
+                        <i class="fa fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#" id="accountsLink">
+                        <i class="fa fa-users"></i> Account Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#" id="scheduleLink">
+                        <i class="fa fa-calendar"></i> Work Schedule Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#" id="emergencyLink">
+                        <i class="fa fa-exclamation-circle"></i> Emergency Requests
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard -->
+            <div id="dashboard" class="dashboard">
+                <h2>System Overview</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Doctors</h5>
+                                <p class="card-text">10</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Patients</h5>
+                                <p class="card-text">50</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Emergency Requests</h5>
+                                <p class="card-text">5</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Management -->
+            <div id="accounts" class="accounts" style="display: none;">
+                <h2>Account Management</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>John Doe</td>
+                            <td>Doctor</td>
+                            <td>
+                                <button class="btn btn-warning"><i class="fa fa-edit"></i> Edit</button>
+                                <button class="btn btn-danger"><i class="fa fa-trash"></i> Delete</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Jane Smith</td>
+                            <td>Nurse</td>
+                            <td>
+                                <button class="btn btn-warning"><i class="fa fa-edit"></i> Edit</button>
+                                <button class="btn btn-danger"><i class="fa fa-trash"></i> Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Work Schedule Management -->
+            <div id="schedule" class="schedule" style="display: none;">
+                <h2>Work Schedule Management</h2>
+                <button class="btn btn-success mb-3"><i class="fa fa-plus"></i> Add Schedule</button>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Doctor/Nurse</th>
+                            <th>Day</th>
+                            <th>Shift</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Dr. John Doe</td>
+                            <td>Monday</td>
+                            <td>9:00 AM - 5:00 PM</td>
+                            <td>
+                                <button class="btn btn-warning"><i class="fa fa-edit"></i> Edit</button>
+                                <button class="btn btn-danger"><i class="fa fa-trash"></i> Delete</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Nurse Jane Smith</td>
+                            <td>Tuesday</td>
+                            <td>10:00 AM - 6:00 PM</td>
+                            <td>
+                                <button class="btn btn-warning"><i class="fa fa-edit"></i> Edit</button>
+                                <button class="btn btn-danger"><i class="fa fa-trash"></i> Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Emergency Requests -->
+            <div id="emergency" class="emergency" style="display: none;">
+                <h2>Emergency Requests</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Request</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mary Johnson</td>
+                            <td>Heart Attack</td>
+                            <td><span class="badge bg-danger">Urgent</span></td>
+                            <td>
+                                <button class="btn btn-success"><i class="fa fa-check"></i> Process</button>
+                                <button class="btn btn-danger"><i class="fa fa-times"></i> Dismiss</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>James Brown</td>
+                            <td>Severe Bleeding</td>
+                            <td><span class="badge bg-warning">In Progress</span></td>
+                            <td>
+                                <button class="btn btn-success"><i class="fa fa-check"></i> Process</button>
+                                <button class="btn btn-danger"><i class="fa fa-times"></i> Dismiss</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/javascripts/admin.js"></script>
+</body>
+</html>
