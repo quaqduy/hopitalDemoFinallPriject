@@ -1,47 +1,40 @@
-/* Đảm bảo body có một margin và padding hợp lý */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-}
-
-/* Sidebar - cố định, không bị ảnh hưởng bởi cuộn */
+/* Custom styling for sidebar */
 .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 250px;
     height: 100vh;
+    background-color: #1d2a4d;
+    position: fixed;
+    width: 250px;
     padding-top: 20px;
-    background-color: #343a40;
     color: white;
-    z-index: 1000; /* Đảm bảo sidebar ở trên phần còn lại */
 }
-
-/* Phần nội dung chính, dịch sang phải đủ để không bị che khuất */
+.sidebar a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    display: block;
+    font-size: 18px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+.sidebar a:hover {
+    background-color: #007bff;
+}
 .main-content {
-    margin-left: 250px; /* Cộng với độ rộng của sidebar */
+    margin-left: 250px;
     padding: 20px;
 }
-
-/* Tăng chiều rộng của các phần card để hiển thị đầy đủ */
-.card {
+.section-title {
     margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #1d2a4d;
 }
-
-.card-title {
-    font-size: 1.2rem;
+.section-content {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
-
-/* Table căn giữa các ô */
-table th, table td {
-    text-align: center;
-}
-
-h2 {
-    margin-top: 30px;
-}
-
-.badge {
-    font-size: 0.9rem;
+.sidebar a.active {
+    background-color: #0062cc;
 }

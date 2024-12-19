@@ -1,20 +1,25 @@
 var createError = require('http-errors');
 var express = require('express');
+const session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var AdminRouter = require('./routes/AdminRouter');
-var DoctorRouter = require('./routes/DoctorRouter');
-var NurseRouter = require('./routes/NurseRouter');
-var PatientRouter = require('./routes/PatientRouter');
+var Routers = require('./routes/index');
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+// Use session middleware
+app.use(session({
+  secret: 'your-secret-key',  // Secret key for encrypting session ID
+  resave: false,  // Don't save session if it wasn't modified
+  saveUninitialized: true,  // Save session even if it is not initialized
+  cookie: { secure: false }  // Set to true if using HTTPS (for security reasons)
+}));
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -26,11 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 const database = require('./config/db');
 database.connect();
 
-app.use('/', indexRouter);
-app.use('/admin', AdminRouter);
-app.use('/doctor', DoctorRouter);
-app.use('/nurse', NurseRouter);
-app.use('/patient', PatientRouter);
+app.use('/', Routers);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

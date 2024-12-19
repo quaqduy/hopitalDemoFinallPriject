@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Receptionist Information</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    .receptionist-info {
+      margin-top: 20px;
+    }
+    .receptionist-info h2 {
+      color: #007bff;
+      font-weight: bold;
+    }
+    .card {
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .card-header {
+      background-color: #f8f9fa;
+    }
+    .card-body {
+      background-color: #f1f3f5;
+    }
+    .btn-custom {
+      background-color: #28a745;
+      color: white;
+    }
+    .btn-custom:hover {
+      background-color: #218838;
+    }
+    .icon {
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container receptionist-info">
+    <h2 class="text-center">Receptionist Information</h2>
+    <div class="row">
+      <!-- Card for Receptionist details -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">
+              <i class="fas fa-user icon"></i> Receptionist: <%= receptionist.user.fullname %>
+            </h5>
+          </div>
+          <div class="card-body">
+            <p><strong><i class="fas fa-hospital-alt"></i> Department:</strong> <%= receptionist.department %></p>
+            <p><strong><i class="fas fa-clock"></i> Shift:</strong> <%= receptionist.shift %></p>
+            <p><strong><i class="fas fa-calendar-day"></i> Joined On:</strong> <%= receptionist.createdAt.toLocaleDateString() %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card for Contact Information -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">
+              <i class="fas fa-address-card icon"></i> Contact Information
+            </h5>
+          </div>
+          <div class="card-body">
+            <p><strong><i class="fas fa-map-marker-alt"></i> Address:</strong> <%= receptionist.user.address || 'Not provided' %></p>
+            <p><strong><i class="fas fa-phone"></i> Phone Number:</strong> <%= receptionist.user.phoneNumber || 'Not provided' %></p>
+            <p><strong><i class="fas fa-envelope"></i> Email:</strong> <%= receptionist.user.email || 'Not provided' %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Button to open the modal for editing Receptionist Info -->
+    <div class="text-center mt-4">
+        <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#editReceptionistModal">
+          <i class="fas fa-edit"></i> Edit Receptionist Information
+        </button>
+    </div>
+  
+    <!-- Modal for editing Receptionist Info -->
+    <div class="modal fade" id="editReceptionistModal" tabindex="-1" aria-labelledby="editReceptionistModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+              <h5 class="modal-title" id="editReceptionistModalLabel">
+                <i class="fas fa-user"></i> Edit Receptionist Info
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="/admin/receptionist/edit/<%= receptionist._id %>" method="post">
+                <!-- Edit Department -->
+                <div class="mb-3">
+                  <label for="department" class="form-label">Department</label>
+                  <input type="text" class="form-control" id="department" name="newDepartment" value="<%= receptionist.department %>" required>
+                </div>
+                
+                <!-- Edit Shift -->
+                <div class="mb-3">
+                  <label for="shift" class="form-label">Shift</label>
+                  <select class="form-select" id="shift" name="newShift" required>
+                    <option value="morning" <%= receptionist.shift === 'morning' ? 'selected' : '' %>>Morning</option>
+                    <option value="afternoon" <%= receptionist.shift === 'afternoon' ? 'selected' : '' %>>Afternoon</option>
+                    <option value="night" <%= receptionist.shift === 'night' ? 'selected' : '' %>>Night</option>
+                  </select>
+                </div>
+    
+                <button type="submit" class="btn btn-success">
+                  <i class="fas fa-save"></i> Save Changes
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

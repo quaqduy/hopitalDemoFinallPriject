@@ -1,21 +1,26 @@
-$(document).ready(function() {
-    $('#dashboardLink').click(function() {
-        $('.dashboard').show();
-        $('.accounts, .schedule, .emergency').hide();
+function showSection(sectionId) {
+    // Hide all sections
+    const sections = document.querySelectorAll('.section-content');
+    sections.forEach(section => {
+        section.style.display = 'none';
     });
 
-    $('#accountsLink').click(function() {
-        $('.accounts').show();
-        $('.dashboard, .schedule, .emergency').hide();
+    // Show the selected section
+    const sectionToShow = document.getElementById(sectionId);
+    sectionToShow.style.display = 'block';
+
+    // Remove active class from all sidebar links
+    const sidebarLinks = document.querySelectorAll('.sidebar a');
+    sidebarLinks.forEach(link => {
+        link.classList.remove('active');
     });
 
-    $('#scheduleLink').click(function() {
-        $('.schedule').show();
-        $('.dashboard, .accounts, .emergency').hide();
-    });
+    // Add active class to the clicked link
+    const activeLink = document.querySelector(`a[onclick="showSection('${sectionId}')"]`);
+    activeLink.classList.add('active');
+}
 
-    $('#emergencyLink').click(function() {
-        $('.emergency').show();
-        $('.dashboard, .accounts, .schedule').hide();
-    });
+// Show the first section by default
+document.addEventListener("DOMContentLoaded", function() {
+    showSection('manageDoctors');
 });

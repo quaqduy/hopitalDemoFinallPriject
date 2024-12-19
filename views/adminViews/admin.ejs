@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+   <link rel="stylesheet" href="/stylesheets/admin.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h3 class="text-center">Admin Panel</h3>
+        <a href="javascript:void(0);" class="nav-link" onclick="showSection('manageDoctors')"><i class="bi bi-person-fill"></i> Doctors</a>
+        <a href="javascript:void(0);" class="nav-link" onclick="showSection('manageNurses')"><i class="bi bi-person-check-fill"></i> Nurses</a>
+        <a href="javascript:void(0);" class="nav-link" onclick="showSection('managePharmacists')"><i class="bi bi-capslock"></i> Pharmacists</a>
+        <a href="javascript:void(0);" class="nav-link" onclick="showSection('manageReceptionists')"><i class="bi bi-house-door-fill"></i> Receptionists</a>
+        <a href="javascript:void(0);" class="nav-link" onclick="showSection('managePatients')"><i class="bi bi-person-bounding-box"></i> Patients</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Admin Dashboard</h1>
+        
+        <!-- Doctor Management Section -->
+        <section id="manageDoctors" class="container mt-5 section-content" style="display:none;">
+            <h2 class="section-title mb-4">Manage Doctors</h2>
+            
+            <!-- Button to toggle form visibility -->
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addDoctorModal">Add New Doctor</button>
+
+            <!-- Table to display doctors -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Specialization</th>
+                        <th>services</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%
+                    
+                        if(doctors && doctors.length>0){
+                            doctors.forEach((doctor)=>{
+                                %>
+                                <tr>
+                                    <td><%=doctor.user.fullname%></td>
+                                    <td><%=doctor.specialization%></td>
+                                    <td><%=doctor.service.name%></td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm" ><a href="admin/doctor/view/<%=doctor._id%>">View</a></button>
+                                    </td>
+                                </tr>
+                                <%
+                            })
+                        }
+
+                    %>
+                </tbody>
+            </table>
+
+            <!-- Modal for adding new doctor -->
+            <div class="modal fade" id="addDoctorModal" tabindex="-1" aria-labelledby="addDoctorModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="addDoctorModalLabel">
+                                <i class="fas fa-user-md"></i> Add New Doctor
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/admin/doctor/add" method="post">
+                                <div class="mb-3">
+                                    <label for="doctorName" class="form-label">Fullname</label>
+                                    <input type="text" class="form-control" id="doctorName" name="fullname" placeholder="Enter doctor's name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="doctorEmail" class="form-label">Email</label>
+                                    <input type="text" class="form-control" id="doctorEmail" name="email" placeholder="Enter doctor's email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="doctorSpecialization" class="form-label">Specialization</label>
+                                    <input type="text" class="form-control" id="doctorSpecialization" name="specialization" placeholder="Enter specialization" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="doctorMedicalService" class="form-label">Medical Service</label>
+                                    <select class="form-select" id="doctorMedicalService" name="service" required>
+                                        <option value="" disabled selected>Select a medical service</option>
+                                        <%
+                                            if(medicalServices && medicalServices.length > 0){
+                                                medicalServices.forEach((item)=>{
+                                                    %>
+                                                    <option value="<%=item._id%>"><%=item.name%></option>
+                                                    <%
+                                                })
+                                            }
+                                        %>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save"></i> Save Doctor
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Nurse Management Section -->
+        <section id="manageNurses" class="container mt-5 section-content" style="display:none;">
+            <h2 class="section-title">Manage Nurses</h2>
+            <!-- Button to toggle form visibility -->
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addNurseModal">Add New Nurse</button>
+
+            <!-- Table to display doctors -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Shift</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%
+                    
+                        if(nurses && nurses.length>0){
+                            nurses.forEach((nurse)=>{
+                                %>
+                                <tr>
+                                    <td><%=nurse.user.fullname%></td>
+                                    <td><%=nurse.department%></td>
+                                    <td><%=nurse.shift%></td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm" ><a href="admin/nurse/view/<%=nurse._id%>">View</a></button>
+                                    </td>
+                                </tr>
+                                <%
+                            })
+                        }
+
+                    %>
+                </tbody>
+            </table>
+
+            <!-- Modal for adding new doctor -->
+            <div class="modal fade" id="addNurseModal" tabindex="-1" aria-labelledby="addNurseModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="addNurseModalLabel">
+                                <i class="fas fa-user-nurse"></i> Add New Nurse
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/admin/nurse/add" method="post">
+                                <div class="mb-3">
+                                    <label for="nurseName" class="form-label">Fullname</label>
+                                    <input type="text" class="form-control" id="nurseName" name="fullname" placeholder="Enter nurse's name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nurseEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="nurseEmail" name="email" placeholder="Enter nurse's email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nurseDepartment" class="form-label">Department</label>
+                                    <input type="text" class="form-control" id="nurseDepartment" name="department" placeholder="Enter department" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nurseShift" class="form-label">Shift</label>
+                                    <select class="form-select" id="nurseShift" name="shift" required>
+                                        <option value="" disabled selected>Select shift</option>
+                                        <option value="morning">Morning</option>
+                                        <option value="afternoon">Afternoon</option>
+                                        <option value="night">Night</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save"></i> Save Nurse
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Pharmacist Management Section -->
+        <section id="managePharmacists" class="container mt-5 section-content" style="display:none;">
+            <h2 class="section-title">Manage Pharmacists</h2>
+            <!-- Button to toggle form visibility -->
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addPharmacistModal">Add New Pharmacist</button>
+
+            <!-- Table to display doctors -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>License Number</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%
+                    
+                        if(pharmacists && pharmacists.length>0){
+                            pharmacists.forEach((pharmacist)=>{
+                                %>
+                                <tr>
+                                    <td><%=pharmacist.user.fullname%></td>
+                                    <td><%=pharmacist.licenseNumber%></td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm" ><a href="admin/pharmacist/view/<%=pharmacist._id%>">View</a></button>
+                                    </td>
+                                </tr>
+                                <%
+                            })
+                        }
+
+                    %>
+                </tbody>
+            </table>
+
+            <!-- Modal for adding new Pharmacist -->
+            <div class="modal fade" id="addPharmacistModal" tabindex="-1" aria-labelledby="addPharmacistModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="addPharmacistModalLabel">
+                                <i class="fas fa-user-pharmacist"></i> Add New Pharmacist
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/admin/pharmacist/add" method="post">
+                                <div class="mb-3">
+                                    <label for="pharmacistName" class="form-label">Fullname</label>
+                                    <input type="text" class="form-control" id="pharmacistName" name="fullname" placeholder="Enter pharmacist's name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="pharmacistEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="pharmacistEmail" name="email" placeholder="Enter pharmacist's email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="pharmacistLicenseNumber" class="form-label">License Number</label>
+                                    <input type="text" class="form-control" id="pharmacistLicenseNumber" name="licenseNumber" placeholder="Enter license number" required>
+                                </div>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save"></i> Save Pharmacist
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Receptionist Management Section -->
+        <section id="manageReceptionists" class="container mt-5 section-content" style="display:none;">
+            <h2 class="section-title">Manage Receptionists</h2>
+            <!-- Button to toggle form visibility -->
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addReceptionistModal">Add New Receptionist</button>
+
+            <!-- Table to display doctors -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Shift</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%
+                    
+                        if(receptionists && receptionists.length>0){
+                            receptionists.forEach((receptionist)=>{
+                                %>
+                                <tr>
+                                    <td><%=receptionist.user.fullname%></td>
+                                    <td><%=receptionist.department%></td>
+                                    <td><%=receptionist.shift%></td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm" ><a href="admin/receptionist/view/<%=receptionist._id%>">View</a></button>
+                                    </td>
+                                </tr>
+                                <%
+                            })
+                        }
+
+                    %>
+                </tbody>
+            </table>
+
+            <!-- Modal for adding new Receptionist -->
+            <div class="modal fade" id="addReceptionistModal" tabindex="-1" aria-labelledby="addReceptionistModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="addReceptionistModalLabel">
+                                <i class="fas fa-user-receptionist"></i> Add New Receptionist
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/admin/receptionist/add" method="post">
+                                <div class="mb-3">
+                                    <label for="receptionistName" class="form-label">Fullname</label>
+                                    <input type="text" class="form-control" id="receptionistName" name="fullname" placeholder="Enter receptionist's name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="receptionistEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="receptionistEmail" name="email" placeholder="Enter receptionist's email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="receptionistDepartment" class="form-label">Department</label>
+                                    <input type="text" class="form-control" id="receptionistDepartment" name="department" placeholder="Enter department" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="receptionistShift" class="form-label">Shift</label>
+                                    <select class="form-select" id="receptionistShift" name="shift" required>
+                                        <option value="" disabled selected>Select shift</option>
+                                        <option value="morning">Morning</option>
+                                        <option value="afternoon">Afternoon</option>
+                                        <option value="night">Night</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save"></i> Save Receptionist
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Patient Management Section -->
+        <section id="managePatients" class="section-content" style="display:none;">
+            <h2 class="section-title">Manage Patients</h2>
+            <!-- Table to display doctors -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Fullname</th>
+                        <th>Email</th>
+                        <th>Address</th>
+                        <th>PhoneNumber</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%
+                    
+                        if(patients && patients.length>0){
+                            patients.forEach((patient)=>{
+                                %>
+                                <tr>
+                                    <td><%=patient.fullname%></td>
+                                    <td><%=patient.email%></td>
+                                    <td><%=patient.address%></td>
+                                    <td><%=patient.phoneNumber%></td>
+                                </tr>
+                                <%
+                            })
+                        }
+
+                    %>
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    <script src="/javascripts/admin.js"></script>
+
+</body>
+</html>

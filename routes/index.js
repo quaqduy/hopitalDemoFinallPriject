@@ -1,9 +1,18 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+const StartRouter = require('./StartRouter');
+const AdminRouter = require('./AdminRouter');
+const AccountRouter = require('./AccountRouter');
+const PatientRouter = require('./PatientRouter');
+
+//Start
+router.use('/', StartRouter);
+//SignIn_Up
+router.use('/', AccountRouter);
+//Admin
+router.use('/admin', AdminRouter);
+//patient
+router.use('/patient', PatientRouter);
 
 module.exports = router;

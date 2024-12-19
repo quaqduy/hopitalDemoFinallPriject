@@ -1,18 +1,18 @@
 const mongoose = require('mongoose');
 
-const NurseSchema = new mongoose.Schema({
+const ReceptionistSchema = new mongoose.Schema({
   user: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User', 
     required: true 
   },
-  department: { 
-    type: String, 
-    required: true 
-  },
   shift: { 
     type: String, 
     enum: ['morning', 'afternoon', 'night'], 
+    required: true 
+  },
+  department: { 
+    type: String, 
     required: true 
   },
   createdAt: { 
@@ -21,4 +21,4 @@ const NurseSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Nurse', NurseSchema);
+module.exports = mongoose.model('Receptionist', ReceptionistSchema);
