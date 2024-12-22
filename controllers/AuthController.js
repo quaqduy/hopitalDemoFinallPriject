@@ -2,6 +2,13 @@ const User = require('../models/UserModel');
 const bcrypt = require('bcrypt');
 
 module.exports = {
+    checkRole(req, res, next){
+        if(req.session.user && req.session.user.role == 'admin'){
+            return next();
+        }else{
+            res.redirect('/');
+        }
+    },
     signIn(req,res){
         res.render('login',{
             errors: [],
@@ -48,7 +55,15 @@ module.exports = {
             if(user.role == 'patient'){
                 // Redirect tới trang chính hoặc trang người dùng
                 res.redirect('/patient/dashboard');  
-            }           
+            }else if(user.role == 'admin'){
+                res.redirect('/admin');  
+            }else if(user.role == 'doctor'){
+                res.redirect('/doctor/dashboard');  
+            }else if(user.role == 'pharmacist'){
+                res.redirect('/pharmacist/dashboard');  
+            }else if(user.role == 'nurse'){
+                res.redirect('/nurse/dashboard');  
+            }
 
         } catch (error) {
             next(error);
@@ -124,5 +139,43 @@ module.exports = {
                     confirmPassword,
                 });
             });
-    }    
+    },
+    logout(req, res){
+        req.session.destroy((err) => {
+            res.clearCookie('connect.sid'); // Xóa cookie của session
+            res.redirect('/'); // Chuyển hướng đến trang login sau khi logout
+          });        
+    },
+    async updateUserInfor(req,res){
+        const {
+            fullname,
+            username,
+            email,
+            address,
+            phoneNumber
+          } = req.body;
+        
+        // Tìm người dùng theo ID từ session
+        const currentUser = await User.findById(req.session.user._id);
+    
+        // Kiểm tra nếu người dùng không tồn tại
+        if (!currentUser) {
+        return res.status(404).send('User not found');
+        }
+    
+        // Cập nhật thông tin người dùng
+        currentUser.fullname = fullname;
+        currentUser.username = username;
+        currentUser.email = email;
+        currentUser.address = address;
+        currentUser.phoneNumber = phoneNumber;
+    
+        // Lưu thông tin đã cập nhật vào cơ sở dữ liệu
+        await currentUser.save();
+
+        req.session.user = currentUser;
+    
+        // Chuyển hướng đến trang dashboard của bệnh nhân
+        res.redirect(`/${req.params.type}/dashboard`);
+    }
 }

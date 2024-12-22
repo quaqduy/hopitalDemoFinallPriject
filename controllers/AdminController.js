@@ -4,11 +4,19 @@ const Receptionist = require('../models/ReceptionistModel');
 const Pharmacist = require('../models/PharmacistModel');
 const MedicalService = require('../models/MedicalServiceModel');
 const User = require('../models/UserModel');
+const SurgeryRegistration = require('../models/SurgeryRegistrationModel');
+const Room = require('../models/RoomModel');
 
 module.exports = {
+    checkRole(req, res, next){
+        if(req.session.user && req.session.user.role == 'admin'){
+            return next();
+        }else{
+            res.redirect('/');
+        }
+    },
     async Dashboard(req, res) {
         try {
-          console.log(req.session.user);
           
           const doctors = await Doctor.find()
           .populate('user', 'username fullname role')  
@@ -27,7 +35,9 @@ module.exports = {
 
           const medicalServices = await MedicalService.find();
 
-          console.log(doctors)
+          const SurgeryRegistrationLS = await SurgeryRegistration.find().populate('patient').populate('surgeryService');
+
+          const rooms = await Room.find().populate('nurseId');
 
           res.render('adminViews/admin.ejs', { 
             medicalServices,
@@ -35,7 +45,9 @@ module.exports = {
             nurses,
             pharmacists,
             receptionists,
-            patients
+            patients,
+            SurgeryRegistrationLS,
+            rooms
           });
         } catch (err) {
           console.error(err);
@@ -232,5 +244,82 @@ module.exports = {
         console.error(err);
         res.status(500).send('Server error');
       }
-    }
+    },
+    async surgeryStatusHandle(req, res){
+      const id = req.params.id;
+      const status = req.params.value;
+
+      const surgeryRegistration = await SurgeryRegistration.findById(id);
+      surgeryRegistration.status = status;
+      surgeryRegistration.save(); 
+      res.redirect('/admin')
+    },
+    async setSurgeons(req, res){
+      console.log(req.params.id,req.body);
+      const surgeryRegistration = await SurgeryRegistration.findById(req.params.id);
+      surgeryRegistration.surgeons = req.body.surgeons;
+      surgeryRegistration.save();
+      res.redirect('/admin');
+    },
+    async createRoom(req, res){
+      const {
+        roomName,
+        bedCount,
+        emptyBeds,
+        bedPrice,
+        roomType,
+        nurseId
+      } = req.body;
+
+      const newRoom = new Room({
+        name : roomName,
+        bedCount,
+        emptyBeds,
+        bedPricePerDay:bedPrice,
+        roomType,
+        nurseId
+      });
+
+      await newRoom.save();
+
+      res.redirect('/admin');
+    },
+    async updateRoom(req, res) {
+      const id = req.params.id;
+      const {
+          roomName,
+          bedCount,
+          emptyBeds,
+          bedPrice,
+          roomType,
+          nurseId
+      } = req.body;
+  
+      // Find the room by ID
+      const currentRoom = await Room.findById(id);
+  
+      // If room not found, return an error
+      if (!currentRoom) {
+          return res.status(404).send('Room not found');
+      }
+  
+      // Update the room's properties
+      currentRoom.name = roomName;
+      currentRoom.bedCount = bedCount;
+      currentRoom.emptyBeds = emptyBeds;
+      currentRoom.bedPricePerDay = bedPrice;
+      currentRoom.roomType = roomType;
+      currentRoom.nurseId = nurseId;
+  
+      // Save the updated room
+      await currentRoom.save();
+  
+      // Redirect to the admin page (or another appropriate page)
+      res.redirect('/admin');
+  } ,
+  async deleteRoom(req, res){
+    const id = req.params.id;
+    await Room.findByIdAndDelete(id);
+    res.redirect('/admin');
+  }
 }

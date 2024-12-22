@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View and Enter Medical Test Results</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome CSS for icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #007bff;
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      font-weight: bold;
+    }
+
+    .form-control {
+      border-radius: 5px;
+    }
+
+    .btn {
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+      border-color: #004085;
+    }
+
+    .form-control:focus {
+      box-shadow: none;
+      border-color: #007bff;
+    }
+
+    .card-header {
+      background-color: #007bff;
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .btn-info {
+      background-color: #17a2b8;
+      border-color: #17a2b8;
+    }
+
+    .btn-info:hover {
+      background-color: #138496;
+      border-color: #117a8b;
+    }
+
+    .form-group textarea {
+      border-radius: 5px;
+    }
+
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 14px;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5">
+    <h2><i class="fas fa-calendar-check"></i> Test Results or Medical Examination Details</h2>
+
+    <form>
+      <!-- Appointment Details -->
+      <div class="form-group">
+        <label for="appointmentId">Appointment ID</label>
+        <input type="text" class="form-control" id="appointmentId" name="appointment" value="<%=appointment._id%>" readonly>
+      </div>
+    
+      <div class="form-group">
+        <label for="patientName">Patient Name</label>
+        <input type="text" class="form-control" id="patientName" value="<%=appointment.patient.fullname%>" readonly>
+      </div>
+    
+      <div class="form-group">
+        <label for="serviceType">Service Type</label>
+        <input type="text" id="serviceType" name="serviceType" class="form-control" value="<%= testResult.serviceType === 'Check-up' ? 'Medical Examination' : 'Laboratory Test' %>" readonly>
+      </div>
+      
+    
+      <div class="form-group">
+        <label for="service">Service</label>
+        <input type="text" class="form-control" id="service" value="<%=appointment.service.name%>" readonly>
+      </div>
+    
+      <div class="form-group">
+        <label for="appointmentDate">Date</label>
+        <input type="text" class="form-control" id="appointmentDate" value="<%=appointment.appointmentDate%>" readonly>
+      </div>
+    
+      <div class="form-group">
+        <label for="appointmentTime">Time</label>
+        <input type="text" class="form-control" id="appointmentTime" value="<%=appointment.appointmentTime%>" readonly>
+      </div>
+    
+      <div class="form-group" id="testTypeField" style="display: none;">
+        <label for="testType"><i class="fas fa-flask"></i> Test Type</label>
+        <input type="text" id="testType" name="testType" class="form-control" value="<%=testResult.testType%>" readonly>
+      </div>
+    
+      <div class="form-group">
+        <label for="resultDetails"><i class="fas fa-file-medical"></i> Enter Result Details</label>
+        <textarea id="resultDetails" name="resultDetails" class="form-control" rows="4" readonly>
+            <%=testResult.resultDetails.trim()%>
+        </textarea>
+      </div>
+    </form>    
+  </div>
+
+  <div class="footer">
+    <p>&copy; 2024 Medical System | All Rights Reserved</p>
+  </div>
+
+  <script>
+    // JavaScript to toggle the Test Type field based on Service Type selection
+    function toggleTestTypeField() {
+      const serviceType = document.getElementById('serviceType').value;
+      const testTypeField = document.getElementById('testTypeField');
+      if (serviceType === 'Test') {
+        testTypeField.style.display = 'block'; // Show the Test Type field when 'Test' is selected
+      } else {
+        testTypeField.style.display = 'none'; // Hide the Test Type field when 'Medical Examination' is selected
+      }
+    }
+
+    // Initialize the form based on the selected service type
+    toggleTestTypeField();
+  </script>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/stylesheets/patientDashboard.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h3 class="text-center">Patient Dashboard</h3>
+    <a href="#" onclick="showSection('section1')"><i class="bi bi-person-check"></i> Register for Appointment</a>
+    <a href="#" onclick="showSection('section2')"><i class="bi bi-calendar-check"></i> View Appointment History</a>
+    <a href="#" onclick="showSection('section8')"><i class="bi bi-box"></i> Pick Up Medication</a>
+    <a href="#" onclick="showSection('section3')"><i class="bi bi-box"></i> Register For Surgery</a>
+    <a href="#" onclick="showSection('section5')"><i class="bi bi-calendar-check"></i> View Surgery History</a>
+    <a href="#" onclick="showSection('section6')"><i class="bi bi-door-open"></i> Register for Hospital Admission</a>
+    <a href="#" onclick="showSection('section7')"><i class="bi bi-calendar-check"></i> View Hospital Admission History</a>
+    <a href="#" onclick="showSection('section4')"><i class="bi bi-person-badge"></i> Update Personal Information</a>
+    <a href="/logout"> <i class="fas fa-sign-out-alt"></i> Logout</a>
+  </div>
+
+  <!-- Content Area -->
+  <div class="content">
+    <section id="section1" class="active">
+      <h2 class="text-center mb-4">Register for Appointment</h2>
+      
+      <form action="/patient/dashboard/appointment" method="post">
+        
+        <!-- Table for selecting services -->
+        <div class="mb-4">
+          <label for="service" class="form-label fw-bold">Select Service</label>
+          <table id="serviceTable" class="table table-striped table-hover">
+            <thead class="table-dark">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Service Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Price</th>
+                <th scope="col">Select</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (medicalServices && medicalServices.length > 0) { 
+                medicalServices.forEach((item, index) => { %>
+                <tr>
+                  <th scope="row"><%= index + 1 %></th>
+                  <td><%= item.name %></td>
+                  <td><%= item.description %></td>
+                  <td>$ <%= item.price %></td>
+                  <td><input type="radio" name="service" value="<%= item._id %>" onclick="renderDoctor('<%= item._id %>')"></td>
+                </tr>
+              <% }) } %>
+            </tbody>
+          </table>
+        </div>
+      
+        <!-- Select Doctor or Department -->
+        <div class="mb-4">
+          <label for="doctorOrDepartment" class="form-label fw-bold">Select Doctor or Department</label>
+          <select class="form-select" id="doctorOrDepartment" name="doctorId" required>
+            <option value="" disabled selected>Please select service before</option>
+          </select>
+        </div>
+      
+        <!-- Select Appointment Date -->
+        <div class="mb-4">
+          <label for="appointmentDate" class="form-label fw-bold">Select Appointment Date</label>
+          <input type="date" class="form-control" id="appointmentDate" name="appointmentDate" required>
+        </div>
+      
+        <!-- Select Appointment Time -->
+        <div class="mb-4">
+          <label for="appointmentTime" class="form-label fw-bold">Select Appointment Time</label>
+          <input type="time" class="form-control" id="appointmentTime" name="appointmentTime" required>
+        </div>
+      
+        <!-- Submit Button -->
+        <div class="mb-4 text-center">
+          <button type="submit" class="btn btn-success btn-lg">
+            <i class="bi bi-calendar-check"></i> Submit Appointment Request
+          </button>
+        </div>
+      </form>
+    
+      <!-- Confirmation Message -->
+      <div id="confirmationMessage" style="display: none; text-align: center; padding: 20px; background-color: #d4edda; border-radius: 8px; border: 1px solid #c3e6cb;">
+        <h3 class="text-success"><i class="bi bi-check-circle"></i> Appointment Request Submitted</h3>
+        <p class="text-success">Your appointment has been successfully scheduled. Check your appointment history.</p>
+      </div>
+    </section>    
+
+    <section id="section2">
+      <h2 class="text-center mb-4">Appointment History</h2>
+      
+      <% if (appointments && appointments.length > 0) { 
+        appointments.forEach((item, index) => { %>
+        
+        <div class="confirmationMessage mb-3" 
+             style="margin: 10px auto; color: white; background-color: 
+               <% if (item.status === 'Completed') { %>
+                 #28a745;  <!-- Green for Completed -->
+               <% } else if (item.status === 'Cancelled') { %>
+                 #dc3545;  <!-- Red for Cancelled -->
+               <% } else if (item.status === 'Scheduled') { %>
+                 #ffc107;  <!-- Yellow for Scheduled -->
+               <% } else if (item.status === 'Pending') { %>
+                 #17a2b8;  <!-- Blue for Pending -->
+               <% } %> !important; border-radius: 8px; padding: 15px;">
+          
+          <h3><i class="bi bi-calendar-check"></i> Appointment <%= item.status %></h3>
+          <p>Your appointment has been successfully <i><b><%= item.status %></b></i>.</p>
+          <p><strong>Appointment Details:</strong></p>
+          <ul>
+            <li><strong><i class="bi bi-file-earmark-medical"></i> Service:</strong> <%= item.service.name %></li>
+            <li><strong><i class="bi bi-person-bounding-box"></i> Doctor:</strong> 
+              <% doctors.forEach((doc) => { %>
+                <% if (doc._id.toString() === item.doctor._id.toString()) { %>
+                  <%= doc.user.fullname %>
+                <% } %>
+              <% }) %>                
+            </li>
+            <li><strong><i class="bi bi-calendar-date"></i> Date:</strong> <%= item.appointmentDate %></li>
+            <li><strong><i class="bi bi-clock"></i> Time:</strong> <%= item.appointmentTime %></li>
+          </ul>
+          
+          <!-- Buttons to trigger modals -->
+          <div class="d-flex gap-2">
+            <button class="btn 
+              <% if (item.status === 'Completed') { %> 
+                btn-success 
+              <% } else if (item.status === 'Cancelled') { %> 
+                btn-danger 
+              <% } else if (item.status === 'Scheduled') { %> 
+                btn-warning 
+              <% } else if (item.status === 'Pending') { %> 
+                btn-info 
+              <% } %>">
+              <a class="text-white text-decoration-none" href="/patient/viewResult/<%= item._id %>" target="_blank">
+                <i class="bi bi-file-earmark-medical"></i> View Test Results
+              </a>
+            </button>
+    
+            <button class="btn 
+              <% if (item.status === 'Completed') { %> 
+                btn-success 
+              <% } else if (item.status === 'Cancelled') { %> 
+                btn-danger 
+              <% } else if (item.status === 'Scheduled') { %> 
+                btn-warning 
+              <% } else if (item.status === 'Pending') { %> 
+                btn-info 
+              <% } %>">
+              <a class="text-white text-decoration-none" href="">
+                <i class="bi bi-file-earmark-spreadsheet"></i> View Invoice Details
+              </a>
+            </button>
+          </div>
+        </div>
+        
+      <% }) } else { %>
+        <p class="text-center">No appointments found.</p>
+      <% } %>
+    </section>
+        
+    <!-- Invoice Details Modal -->
+    <div class="modal fade" id="invoiceDetailsModal" tabindex="-1" aria-labelledby="invoiceDetailsModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="invoiceDetailsModalLabel"><i class="bi bi-file-earmark-spreadsheet"></i> Invoice Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <ul>
+              <li><strong><i class="bi bi-cash-stack"></i> Total Amount:</strong> $150.00</li>
+              <li><strong><i class="bi bi-credit-card"></i> Payment Status:</strong> Paid</li>
+              <li><strong><i class="bi bi-file-earmark-earphones"></i> Payment Method:</strong> Credit Card</li>
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+    <section id="section4">
+      <h2>Update Personal Information</h2>
+      
+      <!-- Form for updating personal information -->
+      <form id="updatePersonalInfoForm" action="/patient/dashboard/user" method="post">
+        <div class="mb-3">
+          <label for="fullname" class="form-label"><i class="bi bi-person-fill"></i> Full Name</label>
+          <input type="text" class="form-control" id="fullname" name="fullname" value="<%=userInf.fullname%>" placeholder="Enter your full name" required>
+        </div>
+        
+        <div class="mb-3">
+          <label for="username" class="form-label"><i class="bi bi-person-circle"></i> Username</label>
+          <input type="text" class="form-control" id="username" name="username" value="<%=userInf.username%>" placeholder="Enter your username" required>
+        </div>
+        
+        <div class="mb-3">
+          <label for="email" class="form-label"><i class="bi bi-envelope"></i> Email</label>
+          <input type="email" class="form-control" id="email" name="email" value="<%=userInf.email%>" placeholder="Enter your email" required>
+        </div>
+        
+        <div class="mb-3">
+          <label for="address" class="form-label"><i class="bi bi-house-door"></i> Address</label>
+          <input type="text" class="form-control" id="address" name="address" value="<%=userInf.address%>" placeholder="Enter your email" required>
+        </div>
+        
+        <div class="mb-3">
+          <label for="phonenumber" class="form-label"><i class="bi bi-telephone"></i> Phone Number</label>
+          <input type="text" class="form-control" id="phonenumber" name="phoneNumber" value="<%=userInf.phoneNumber%>" placeholder="Enter your phone number" required>
+        </div>
+        
+        <!-- Update Button -->
+        <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Update</button>
+      </form>
+    </section>
+
+
+    <section id="section8">
+      <h2>Pick Up Medication</h2>
+      
+      <%
+      if (medicationLs && medicationLs.length > 0) {
+        medicationLs.forEach((item) => {
+      %>
+      <!-- Information for Picking Up Medication -->
+      <div class="medicationInfo p-4 mb-4 bg-light rounded shadow-sm">
+        <p class="text-primary fw-bold">After your consultation, please proceed to the pharmacy to collect your medication and make the payment for your prescription.</p>
+
+        <h4 class="text-success mt-3">Prescription Details</h4>
+        <ul class="list-unstyled">
+          <li><strong>Doctor:</strong> 
+            <%
+            doctors.forEach((d) => {
+              if (d._id.toString() == item.appointment.doctor._id.toString()) {
+            %>
+              <span class="text-info"><%= d.user.fullname %></span>
+            <%
+              }
+            })
+            %>
+          </li>
+          <li><strong>Medication:</strong> 
+            <table class="table table-bordered table-striped mt-2">
+              <thead class="table-primary">
+                <tr>
+                  <th>Name</th>
+                  <th>Usage</th>
+                  <th>Description</th>
+                  <th>Instructions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%
+                item.drugResult.drugs.forEach((dr) => {
+                  for (var df of drugsInf) {
+                    if (df._id.toString() == dr.toString()) {
+                %>
+                <tr>
+                  <td><%= df.name %></td>
+                  <td><%= df.usage %></td>
+                  <td><%= df.description %></td>
+                  <td><%= df.instructions %></td>
+                </tr>
+                <%
+                    }
+                  }
+                })
+                %>
+              </tbody>
+            </table>
+          </li>
+        </ul>
+
+        <button class="btn btn-info mt-3" data-bs-toggle="modal" data-bs-target="#invoiceModal">
+          <i class="bi bi-file-earmark-spreadsheet"></i> View Invoice
+        </button>
+      </div>
+      <%
+        })
+      }
+      %>
+
+
+      <!-- Invoice Modal -->
+      <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="invoiceModalLabel"><i class="bi bi-file-earmark-spreadsheet"></i> Invoice Details</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <ul>
+                <li><strong><i class="bi bi-cash-stack"></i> Total Amount:</strong> $30.00</li>
+                <li><strong><i class="bi bi-credit-card"></i> Payment Status:</strong> Pending</li>
+                <li><strong><i class="bi bi-credit-card-2-front"></i> Payment Method:</strong> Credit Card</li>
+              </ul>
+              
+              <div class="mt-3">
+                <button class="btn btn-success">Pay Now</button>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Pharmacy Pickup Instructions -->
+      <h4>Pharmacy Pickup Instructions</h4>
+      <p>Please proceed to the pharmacy after completing the payment. Our staff will assist you in collecting your prescribed medication.</p>
+    </section>
+
+    <section id="section3">
+      <h1 class="text-center mb-4">Register For Surgery</h1>
+    
+      <form action="/patient/dashboard/surgery" method="post">
+        <!-- Table for selecting services -->
+        <div class="mb-3">
+          <label for="service" class="form-label">Select Surgery Service</label>
+          <table id="serviceTable" class="table table-bordered">
+            <thead class="table-dark">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Service Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Price</th>
+                <th scope="col">Select</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (surgeryServices && surgeryServices.length > 0) { 
+                   surgeryServices.forEach((item, index) => { %>
+              <tr>
+                <th scope="row"><%= index + 1 %></th>
+                <td><%= item.name %></td>
+                <td><%= item.description %></td>
+                <td>$ <%= item.price %></td>
+                <td><input type="radio" name="surgeryService" value="<%= item._id %>" class="form-check-input"></td>
+              </tr>
+              <% }) } %>
+            </tbody>
+          </table>
+        </div>
+    
+        <!-- Select Surgery Date -->
+        <div class="mb-3">
+          <label for="surgeryDate" class="form-label">Select Surgery Date</label>
+          <input type="date" class="form-control" id="surgeryDate" name="surgeryDate" required>
+        </div>
+    
+        <!-- Select Surgery Time -->
+        <div class="mb-3">
+          <label for="surgeryTime" class="form-label">Select Surgery Time</label>
+          <input type="time" class="form-control" id="surgeryTime" name="surgeryTime" required>
+        </div>
+    
+        <!-- Submit Button -->
+        <div class="mb-3 text-center">
+          <button type="submit" class="btn btn-success btn-lg">
+            <i class="bi bi-check-circle"></i> Submit Surgery Request
+          </button>
+        </div>
+      </form>
+    </section>
+    
+    <section id="section5">
+      <h1 class="text-center mb-4">Surgery Registration List</h1>
+      
+      <!-- Table to display surgery registrations -->
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>Service Name</th>
+            <th>Surgery Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (surgeryRegistrations && surgeryRegistrations.length > 0) { 
+               surgeryRegistrations.forEach((item, index) => { %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= item.surgeryService.name %></td>
+            <td><%= item.surgeryDate.toLocaleDateString() %></td>
+            <td>
+              <span class="badge 
+                <% if (item.status === 'Pending') { %> text-info 
+                <% } else if (item.status === 'Scheduled') { %> text-warning 
+                <% } else if (item.status === 'Completed') { %> text-success 
+                <% } else if (item.status === 'Cancelled') { %> text-danger 
+                <% } %>">
+                <!-- Icon tương ứng với từng trạng thái -->
+                <% if (item.status === 'Pending') { %>
+                  <i class="bi bi-hourglass-split"></i> 
+                <% } else if (item.status === 'Scheduled') { %>
+                  <i class="bi bi-calendar-check"></i> 
+                <% } else if (item.status === 'Completed') { %>
+                  <i class="bi bi-check-circle"></i> 
+                <% } else if (item.status === 'Cancelled') { %>
+                  <i class="bi bi-x-circle"></i> 
+                <% } %>
+                <%= item.status %>
+              </span>
+            </td>
+          </tr>
+          <% }) } else { %>
+          <tr>
+            <td colspan="5" class="text-center">No surgery registrations found</td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </section>
+    
+    <section id="section6" class="container mt-5">
+      <h1 class="text-center mb-4"><i class="bi bi-house-door"></i> Register for Hospital Admission</h1>
+      
+      <form action="/patient/room/register" method="POST">
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>Room Name</th>
+                <th>Available Bed Quantity</th>
+                <th>Price per Day</th>
+                <th>Room Type</th>
+                <th>Your Choice</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if(rooms && rooms.length > 0){ %>
+                <% rooms.forEach((item) => { %>
+                  <tr>
+                    <td><%= item.name %></td>
+                    <td><%= item.emptyBeds %></td>
+                    <td>$ <%= item.bedPricePerDay %></td>
+                    <td>
+                      <span class="badge <%= item.roomType === 'VIP' ? 'bg-warning' : 'bg-secondary' %>">
+                        <i class="bi <%= item.roomType === 'VIP' ? 'bi-crown' : 'bi-building' %>"></i>
+                        <%= item.roomType %>
+                      </span>
+                    </td>
+                    <td>
+                      <% if(item.emptyBeds > 0){ %>
+                        <input type="radio" name="roomId" value="<%= item._id %>" id="room-<%= item._id %>">
+                        <label for="room-<%= item._id %>">
+                          <i class="bi bi-check-circle"></i> Choose
+                        </label>
+                      <% } else { %>
+                        No bed available
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+    
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="startDate" class="form-label"><i class="bi bi-calendar-event"></i> Start Date</label>
+            <input type="date" class="form-control" name="startDate" id="startDate" required>
+          </div>
+          <div class="col-md-6">
+            <label for="endDate" class="form-label"><i class="bi bi-calendar-x"></i> End Date</label>
+            <input type="date" class="form-control" name="endDate" id="endDate" required>
+          </div>
+        </div>
+    
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-arrow-right-circle"></i> Submit Registration
+          </button>
+        </div>
+      </form>
+    </section>
+   
+    <section id="section7" class="container mt-5">
+      <h1 class="text-center mb-4"><i class="bi bi-archive"></i> View Hospital Admission History</h1>
+      
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead class="table-primary">
+            <tr>
+              <th>#</th>
+              <th>Room Name</th>
+              <th>Room Type</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Total Days</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if(roomRegisters && roomRegisters.length > 0){ %>
+              <% roomRegisters.forEach((item, index) => { 
+                const startDate = new Date(item.startDate);
+                const endDate = new Date(item.endDate);
+                const totalDays = Math.ceil((endDate - startDate) / (1000 * 3600 * 24)); // Calculate total days
+              %>
+                <tr>
+                  <td><%= index + 1 %></td>
+                  <td><%= item.roomId.name %></td>
+                  <td>
+                    <span class="badge <%= item.roomId.roomType === 'VIP' ? 'bg-warning' : 'bg-secondary' %>">
+                      <i class="bi <%= item.roomId.roomType === 'VIP' ? 'bi-crown' : 'bi-building' %>"></i>
+                      <%= item.roomId.roomType %>
+                    </span>
+                  </td>
+                  <td><%= startDate.toLocaleDateString() %></td>
+                  <td><%= endDate.toLocaleDateString() %></td>
+                  <td><%= totalDays %> days</td>
+                  <td>
+                    <% if(item.status === 'Pending'){ %>
+                      <span class="badge bg-warning"><i class="bi bi-clock"></i> Pending</span>
+                    <% } else if(item.status === 'Accepted'){ %>
+                      <span class="badge bg-success"><i class="bi bi-check-circle"></i> Accepted</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="7" class="text-center text-danger">No admission history found.</td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- Bootstrap and Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const doctorsData = <%- JSON.stringify(doctors) %>;
+  </script>
+  <script src="/javascripts/patientDashboard.js"></script>
+
+</body>
+</html>

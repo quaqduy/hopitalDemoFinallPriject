@@ -20,7 +20,7 @@ const MedicalServiceSchema = new mongoose.Schema({
     default: Date.now 
   }
 },{ 
-  collection: 'MedicalService'  // Đặt tên collection là 'MedicalService'
+  collection: 'MedicalService'  // Đặt tên collection là ''
 });
 
 module.exports = mongoose.model('MedicalService', MedicalServiceSchema);

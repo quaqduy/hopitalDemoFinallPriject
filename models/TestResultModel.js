@@ -9,7 +9,7 @@ const TestResultSchema = new mongoose.Schema({
   },
   resultDetails: { 
     type: String, 
-    required: true, 
+    required: false, 
     // Có thể là kết quả khám hoặc xét nghiệm tùy theo serviceType
   },
   testType: { 
