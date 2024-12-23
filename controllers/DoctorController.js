@@ -6,6 +6,8 @@ const TestResult = require('../models/TestResultModel');
 const Drug = require('../models/DrugModel');
 const PatientDrugs = require('../models/PatientDrugsModel');
 const SurgeryRegistration = require('../models/SurgeryRegistrationModel');
+const Bill = require('../models/BillModel');
+const mongoose = require('mongoose');
 
 module.exports = {
     checkRole(req, res, next){
@@ -49,10 +51,22 @@ module.exports = {
     },
     async completeAppointment(req, res){
         const id = req.params.id;
-        const appointment = await Appointment.findById(id);
+        const appointment = await Appointment.findById(id)
+        .populate('patient')
+        .populate('service');
 
         appointment.status = 'Completed';
         appointment.save();
+
+        const newBill = new Bill({
+            patient: appointment.patient._id,
+            appointmentId: appointment._id,
+            totalPrice: appointment.service.price,
+            status: 'Paid'
+        })
+
+        await newBill.save();
+
         res.redirect('/doctor/dashboard');
     },
     async viewResult(req,res){
@@ -67,6 +81,7 @@ module.exports = {
 
         const patientDrugsIdls = await PatientDrugs.find({appointmentId:id})
         
+        req.session.patient = appointment.patient;
 
         res.render('doctorViews/resultView',{appointment, testResult:testResult[0], drugs , patientDrugsId: patientDrugsIdls[0].drugs});
     },
@@ -108,16 +123,17 @@ module.exports = {
     },
     async saveDrug(req, res) {
         const apmId = req.params.id; // Lấy id cuộc hẹn từ URL
-        console.log(req.body);
     
         try {
             // Kiểm tra xem cuộc hẹn đã có thuốc kê chưa
             const existingPatientDrugs = await PatientDrugs.findOne({ appointmentId: apmId });
     
+            let currentDrugs = existingPatientDrugs;
             // Nếu đã có thông tin thuốc cho cuộc hẹn này, thực hiện update
             if (existingPatientDrugs) {
                 // Cập nhật danh sách thuốc
                 existingPatientDrugs.drugs = req.body.drugIds; // Cập nhật danh sách thuốc
+                currentDrugs = existingPatientDrugs;
                 await existingPatientDrugs.save(); // Lưu thay đổi vào cơ sở dữ liệu
                 console.log('Updated patient drugs successfully!');
             } else {
@@ -127,9 +143,44 @@ module.exports = {
                     drugs: req.body.drugIds,
                 });
                 await newPatientDrugs.save(); // Lưu vào cơ sở dữ liệu
+                currentDrugs = newPatientDrugs;
                 console.log('Saved new patient drugs successfully!');
             }
     
+            let drugsTotalPrice = 0;
+            if(typeof req.body.drugIds == 'string'){
+                const drugInf = await Drug.findById(req.body.drugIds);
+                drugsTotalPrice += drugInf?.price || 0;
+            }else{
+                for (const dr of req.body.drugIds) {
+                    const drugId = dr; 
+                    const drugInf = await Drug.findById(drugId);
+                    drugsTotalPrice += drugInf?.price || 0;
+                }
+            }
+
+            // Tìm bill theo điều kiện
+            let bill = await Bill.findOne({
+                patient: req.session.patient._id,
+                patientDrugsId: currentDrugs._id
+            });
+
+            if (bill) {
+                // Nếu bill tồn tại, cập nhật totalPrice
+                bill.totalPrice = drugsTotalPrice;
+                await bill.save();
+            } else {
+                // Nếu chưa tồn tại, tạo mới bill
+                bill = new Bill({
+                    patient: req.session.patient._id,
+                    patientDrugsId: currentDrugs._id,
+                    totalPrice: drugsTotalPrice
+                });
+                await bill.save();
+            }
+
+            req.session.patient = null;
+
             // Sau khi cập nhật hoặc lưu thành công, chuyển hướng đến trang kết quả cuộc hẹn
             res.redirect(`/doctor/viewResultPage/${apmId}`);
         } catch (error) {
@@ -141,9 +192,32 @@ module.exports = {
         const id = req.params.id;
         const status = req.params.value;
   
-        const surgeryRegistration = await SurgeryRegistration.findById(id);
+        const surgeryRegistration = await SurgeryRegistration.findById(id)
+        .populate('patient')
+        .populate('surgeryService');
         surgeryRegistration.status = status;
         surgeryRegistration.save(); 
+
+        if (status == 'Completed') {
+            // Kiểm tra xem hóa đơn đã tồn tại chưa
+            const existingBill = await Bill.findOne({
+                patient: surgeryRegistration.patient,
+                surgeryRegistrationId: surgeryRegistration._id
+            });
+        
+            // Nếu hóa đơn đã tồn tại, không tạo mới
+            if (!existingBill) {
+                const newBill = new Bill({
+                    patient: surgeryRegistration.patient,
+                    surgeryRegistrationId: surgeryRegistration._id,
+                    totalPrice: surgeryRegistration.surgeryService.price
+                });
+        
+                // Lưu hóa đơn mới vào cơ sở dữ liệu
+                await newBill.save();
+            }
+        }
+      
         res.redirect('/doctor/Dashboard');
       },
 }

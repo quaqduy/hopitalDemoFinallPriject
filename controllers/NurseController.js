@@ -10,6 +10,7 @@ const Room = require('../models/RoomModel');
 const Nurse = require('../models/NurseModel');
 const RoomRegister = require('../models/RoomRegisterModel');
 const PatientCondition = require('../models/PatientConditionModel');
+const Bill = require('../models/BillModel');
 
 module.exports = {
     checkRole(req, res, next){
@@ -52,6 +53,30 @@ module.exports = {
             nurseId: currentRoom.nurseId,
             roomId: roomRegister.roomId
         })
+
+        //bill
+        const room = await Room.findById(roomRegister.roomId);
+    
+        if (!room) {
+            throw new Error('Room not found');
+        }
+    
+        // Tính toán tổng giá tiền dựa trên số ngày
+        const startDate = new Date(roomRegister.startDate);
+        const endDate = new Date(roomRegister.endDate);
+        const timeDiff = endDate - startDate;
+        const numberOfDays = timeDiff / (1000 * 3600 * 24); // Chuyển đổi từ milliseconds thành ngày
+    
+        const totalPrice = room.bedPricePerDay * numberOfDays;
+    
+        const newBill = new Bill({
+            patient: roomRegister.userId,
+            roomId: roomRegister.roomId,
+            totalPrice: totalPrice
+        });
+    
+        // Lưu hóa đơn
+        await newBill.save();
 
         newPatientCondition.save();
 

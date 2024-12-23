@@ -6,6 +6,7 @@ const MedicalService = require('../models/MedicalServiceModel');
 const User = require('../models/UserModel');
 const SurgeryRegistration = require('../models/SurgeryRegistrationModel');
 const Room = require('../models/RoomModel');
+const Bill = require('../models/BillModel');
 
 module.exports = {
     checkRole(req, res, next){
@@ -249,9 +250,10 @@ module.exports = {
       const id = req.params.id;
       const status = req.params.value;
 
-      const surgeryRegistration = await SurgeryRegistration.findById(id);
+      const surgeryRegistration = await SurgeryRegistration.findById(id).populate('surgeryService');
       surgeryRegistration.status = status;
       surgeryRegistration.save(); 
+      
       res.redirect('/admin')
     },
     async setSurgeons(req, res){

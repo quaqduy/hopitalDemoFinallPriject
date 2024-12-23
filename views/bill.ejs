@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Service Bill</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+        .bill-container {
+            width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header p {
+            margin: 5px 0;
+        }
+        .details, .summary {
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .total {
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="bill-container">
+        <div class="header">
+            <%
+                if(typeBill == 'appointment'){
+                    %>
+                    <h1>Medical Service Bill</h1>
+                    <%
+                }else if(typeBill == 'drug'){
+                    %>
+                    <h1>Medication Bill</h1>
+                    <%
+                }else if(typeBill == 'surgery'){
+                    %>
+                    <h1>Surgery Bill</h1>
+                    <%
+                }else if(typeBill == 'room'){
+                    %>
+                    <h1>Room Bill</h1>
+                    <%
+                }
+            %>
+            <p><strong>Clinic Name:</strong> HealthCare Plus</p>
+            <p><strong>Address:</strong> 123 Main Street, City, Country</p>
+            <p><strong>Contact:</strong> +84-123-456-789</p>
+        </div>
+
+        <div class="details">
+            <%
+                if(typeBill == 'appointment'){
+                    %>
+                    <p><strong>Patient Name:</strong> <%= bill._doc.patient.fullname %></p>
+                    <p><strong>Bill Date:</strong> 
+                        <%= new Intl.DateTimeFormat('us', { dateStyle: 'long' }).format(new Date(bill._doc.createdAt)) %>
+                    </p>
+                    <p><strong>Appointment ID:</strong> <%= bill._doc.appointmentId._id %></p>
+                    <%
+                }else if(typeBill == 'drug'){
+                    %>
+                    <p><strong>Patient Name:</strong> <%= bill.patient.fullname %></p>
+                    <p><strong>Bill Date:</strong> 
+                        <%= new Intl.DateTimeFormat('us', { dateStyle: 'long' }).format(new Date(bill.createdAt)) %>
+                    </p>
+                    <p><strong>Detail ID:</strong> <%= bill.patientDrugsId._id %></p>
+                    <%
+                }else if(typeBill == 'surgery'){
+                    %>
+                    <p><strong>Patient Name:</strong> <%= bill._doc.patient.fullname %></p>
+                    <p><strong>Bill Date:</strong> 
+                        <%= new Intl.DateTimeFormat('us', { dateStyle: 'long' }).format(new Date(bill._doc.createdAt)) %>
+                    </p>
+                    <p><strong>Surgery ID:</strong> <%= bill._doc.surgeryRegistrationId._id %></p>
+                    <%
+                }else if(typeBill == 'room'){
+                    %>
+                    <p><strong>Patient Name:</strong> <%= bill.patient.fullname %></p>
+                    <p><strong>Bill Date:</strong> 
+                        <%= new Intl.DateTimeFormat('us', { dateStyle: 'long' }).format(new Date(bill.createdAt)) %>
+                    </p>
+                    <p><strong>Room ID:</strong> <%= bill.roomId._id %> - <%= bill.roomId.name %></p>
+                    <%
+                }
+            %>            
+        </div>
+
+        <div class="services">
+            <%
+                if(typeBill == 'appointment'){
+                    %>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><%= bill.serviceInf.name %></td>
+                                <td>$ <%= bill._doc.totalPrice %></td>
+                            </tr>
+                        </tbody>
+                    </table>                    
+                    <%
+                }else if(typeBill == 'drug'){
+                    %>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Drug name</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <%
+                                if(bill.patientDrugsId.drugs && bill.patientDrugsId.drugs.length > 0){
+                                    bill.patientDrugsId.drugs.forEach((dr,index)=>{
+                                        %>
+                                        <tr>
+                                            <td><%= index+1 %></td>
+                                            <td> <%= dr.name %></td>
+                                            <td>$ <%= dr.price %></td>
+                                        </tr>
+                                        <%
+                                    })
+                                }
+                            %>
+                        </tbody>
+                    </table>                    
+                    <%
+                }else if(typeBill == 'surgery'){
+                    %>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Surgery name</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <%
+                                if(bill.surgeryInf ){
+                                    %>
+                                        <tr>
+                                            <td>#</td>
+                                            <td> <%= bill.surgeryInf.name %></td>
+                                            <td> <%= bill.surgeryInf.description %></td>
+                                            <td>$ <%= bill.surgeryInf.price %></td>
+                                        </tr>
+                                    <%
+                                }
+                            %>
+                        </tbody>
+                    </table>                    
+                    <%
+                }else if(typeBill == 'room'){
+                    %>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Room name</th>
+                                <th>Day stay</th>
+                                <th>Price per day</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <%
+                                if(bill.roomId ){
+                                    %>
+                                        <tr>
+                                            <td>#</td>
+                                            <td> <%= bill.roomId.name %></td>
+                                            <td>
+                                                <%= roomRegister && roomRegister.startDate && roomRegister.endDate 
+                                                      ? Math.ceil((new Date(roomRegister.endDate) - new Date(roomRegister.startDate)) / (1000 * 60 * 60 * 24)) 
+                                                      : "" %>
+                                              </td>                                              
+                                            <td>$ <%= bill.roomId.bedPricePerDay %></td>
+                                        </tr>
+                                    <%
+                                }
+                            %>
+                        </tbody>
+                    </table>                    
+                    <%
+                }
+            %>       
+        </div>
+
+        <div class="summary">
+            <%
+                if(typeBill == 'appointment'){
+                    %>
+                    <p><strong>Total Amount ($):</strong> $ <%= bill._doc.totalPrice %></p>          
+                    <%
+                }else if(typeBill == 'drug'){
+                    %>
+                    <p><strong>Total Amount ($):</strong> $ <%= bill.totalPrice %></p>          
+                    <%
+                }else if(typeBill == 'surgery'){
+                    %>
+                    <p><strong>Total Amount ($):</strong> $ <%= bill._doc.totalPrice %></p>          
+                    <%
+                }else if(typeBill == 'room'){
+                    %>
+                    <p><strong>Total Amount ($):</strong> $ <%= bill.totalPrice %></p>          
+                    <%
+                }
+            %>       
+            <p><strong>Payment Method:</strong> Cash</p>
+        </div>
+
+        <div class="footer">
+            <p>Thank you for trusting HealthCare Plus!</p>
+            <p>If you have any questions, please contact us at +84-123-456-789.</p>
+        </div>
+    </div>
+</body>
+</html>

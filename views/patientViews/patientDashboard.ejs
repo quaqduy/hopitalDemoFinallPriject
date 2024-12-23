@@ -145,20 +145,26 @@
               </a>
             </button>
     
-            <button class="btn 
-              <% if (item.status === 'Completed') { %> 
-                btn-success 
-              <% } else if (item.status === 'Cancelled') { %> 
-                btn-danger 
-              <% } else if (item.status === 'Scheduled') { %> 
-                btn-warning 
-              <% } else if (item.status === 'Pending') { %> 
-                btn-info 
-              <% } %>">
-              <a class="text-white text-decoration-none" href="">
-                <i class="bi bi-file-earmark-spreadsheet"></i> View Invoice Details
-              </a>
-            </button>
+            <%
+              if(item.status == 'Completed'){
+                %>
+                <button class="btn 
+                  <% if (item.status === 'Completed') { %> 
+                    btn-success 
+                  <% } else if (item.status === 'Cancelled') { %> 
+                    btn-danger 
+                  <% } else if (item.status === 'Scheduled') { %> 
+                    btn-warning 
+                  <% } else if (item.status === 'Pending') { %> 
+                    btn-info 
+                  <% } %>">
+                  <a class="text-white text-decoration-none" href="/bill/appointment/<%=item._id%>" target="_blank">
+                    <i class="bi bi-file-earmark-spreadsheet"></i> View Invoice Details
+                  </a>
+                </button>
+                <%
+              }
+            %>
           </div>
         </div>
         
@@ -282,8 +288,8 @@
           </li>
         </ul>
 
-        <button class="btn btn-info mt-3" data-bs-toggle="modal" data-bs-target="#invoiceModal">
-          <i class="bi bi-file-earmark-spreadsheet"></i> View Invoice
+        <button class="btn btn-info mt-3" >
+          <a href="/bill/drug/<%=item.drugResult._id%>" target="_blank"><i class="bi bi-file-earmark-spreadsheet"></i> View Invoice</a>      
         </button>
       </div>
       <%
@@ -387,6 +393,7 @@
             <th>Service Name</th>
             <th>Surgery Date</th>
             <th>Status</th>
+            <td>Action</td>
           </tr>
         </thead>
         <tbody>
@@ -415,6 +422,16 @@
                 <% } %>
                 <%= item.status %>
               </span>
+            </td>
+            <td>
+              <% if (item.status === 'Completed'){ %> 
+                <button class="btn 
+                <% if (item.status === 'Completed') { %> 
+                  btn-success <%}%>"><a class="text-white text-decoration-none" href="/bill/surgery/<%=item._id%>" target="_blank">
+                    <i class="bi bi-file-earmark-spreadsheet"></i> View Invoice Details
+                  </a> 
+                </button>
+              <% } %> 
             </td>
           </tr>
           <% }) } else { %>
@@ -504,6 +521,7 @@
               <th>End Date</th>
               <th>Total Days</th>
               <th>Status</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -531,6 +549,20 @@
                     <% } else if(item.status === 'Accepted'){ %>
                       <span class="badge bg-success"><i class="bi bi-check-circle"></i> Accepted</span>
                     <% } %>
+                  </td>
+                  <td>
+                    <% if (item.status === 'Accepted'){ %> 
+                      <button class="btn 
+                          <% if (item.status === 'Completed') { %> 
+                              btn-success 
+                          <% } else { %> 
+                              btn-warning 
+                          <% } %>">
+                          <a class="text-white text-decoration-none" href="/bill/room/<%=item.roomId._id%>" target="_blank">
+                              <i class="bi bi-file-earmark-spreadsheet"></i> View Invoice Details
+                          </a>
+                      </button>
+                    <% } %>                  
                   </td>
                 </tr>
               <% }) %>
