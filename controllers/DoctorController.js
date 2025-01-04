@@ -83,7 +83,12 @@ module.exports = {
         
         req.session.patient = appointment.patient;
 
-        res.render('doctorViews/resultView',{appointment, testResult:testResult[0], drugs , patientDrugsId: patientDrugsIdls[0].drugs});
+        let patientDrugsId = [];
+        if(patientDrugsIdls[0] && patientDrugsIdls[0].drugs.length > 0){
+            patientDrugsId = patientDrugsIdls[0].drugs;
+        }
+
+        res.render('doctorViews/resultView',{appointment, testResult:testResult[0], drugs , patientDrugsId});
     },
     async saveResult(req, res) {
         const id = req.params.id;

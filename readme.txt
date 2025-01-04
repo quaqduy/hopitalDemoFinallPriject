@@ -1,5 +1,9 @@
 Install Dependencies:
 
+If you want to view the database, use mongoDBCompass:
+	With this connection string:
+	mongodb+srv://quaqduy:quaqduy123@quaqduy.haftq.mongodb.net/
+
 Steps to Run the Project:
 1. Install Dependencies:
 	- Open the terminal in the project directory.

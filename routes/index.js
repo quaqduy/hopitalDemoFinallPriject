@@ -64,7 +64,10 @@ router.get('/bill/:type/:id', async (req,res)=>{
 
             bill = bill[0];
 
-            const surgeryInf = await SurgeryService.findById(bill.surgeryRegistrationId.surgeryService);
+            let surgeryInf = {};
+            if(bill.surgeryRegistrationId){
+                surgeryInf = await SurgeryService.findById(bill.surgeryRegistrationId.surgeryService);
+            }
 
             bill = {...bill, surgeryInf};
         }else if(typeBill == 'room'){
